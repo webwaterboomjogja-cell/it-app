@@ -78,6 +78,7 @@ class Monthlyitreport extends Model
         'finalized_at' => 'datetime',
     ];
 
+    protected $table = 'monthlyitreports';
 
     public function generatedBy(): BelongsTo
     {
@@ -160,7 +161,7 @@ class Monthlyitreport extends Model
             && $this->hasMeaningfulText($this->recommendation);
     }
 
-   
+
     public function finalizeBy(?int $approvedBy): void
     {
         if ($this->isFinalized()) {
