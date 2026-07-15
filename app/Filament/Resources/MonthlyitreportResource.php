@@ -470,7 +470,7 @@ class MonthlyItReportResource extends Resource
                     ->label('Evaluasi')
                     ->icon('heroicon-o-pencil-square')
                     ->visible(
-                        fn(MonthlyItReport $record): bool =>
+                        fn(Monthlyitreport $record): bool =>
                         $record->isDraft()
                     ),
 

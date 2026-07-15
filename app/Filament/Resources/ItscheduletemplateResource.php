@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ItscheduleTemplateResource\Pages;
 use App\Models\Itschedule;
-use App\Models\ItscheduleTemplate;
+use App\Models\Itscheduletemplate;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,7 +13,7 @@ use Filament\Tables\Table;
 
 class ItscheduletemplateResource extends Resource
 {
-    protected static ?string $model = ItscheduleTemplate::class;
+    protected static ?string $model = Itscheduletemplate::class;
 
     protected static ?string $navigationGroup = 'Manajemen IT';
 

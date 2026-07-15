@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ItassetMovementResource\Pages;
 use App\Models\Itassests;
-use App\Models\ItassetMovement;
+use App\Models\Itassetmovement;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -14,7 +14,7 @@ use Filament\Tables\Table;
 
 class ItassetMovementResource extends Resource
 {
-    protected static ?string $model = ItassetMovement::class;
+    protected static ?string $model = Itassetmovement::class;
 
     protected static ?string $navigationGroup = 'Inventaris IT';
 

@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ExportHistoryResource\Pages;
-use App\Models\ExportHistory;
+use App\Models\Exporthistory;
 use App\Services\Exports\ExportArchiveService;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -212,14 +212,14 @@ class ExportHistoryResource extends Resource
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('primary')
                     ->visible(
-                        fn(ExportHistory $record): bool =>
+                        fn(Exporthistory $record): bool =>
                         $record->isCompleted() &&
                             auth()->user()?->can(
                                 'download_export_archive'
                             )
                     )
                     ->action(
-                        function (ExportHistory $record) {
+                        function (Exporthistory $record) {
 
 
                             abort_unless(
@@ -338,7 +338,7 @@ class ExportHistoryResource extends Resource
                     )
                     ->visible(
                         fn(
-                            ExportHistory $record
+                            Exporthistory $record
                         ): bool =>
                         ! $record->isFinal() &&
                             $record->isCompleted() &&
@@ -348,7 +348,7 @@ class ExportHistoryResource extends Resource
                     )
                     ->action(
                         function (
-                            ExportHistory $record
+                            Exporthistory $record
                         ): void {
                             try {
                                 app(

@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\DailyReportResource\Pages;
-use App\Models\DailyReport;
+use App\Models\Dailyreport;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,7 +16,7 @@ use Illuminate\Support\Carbon;
 
 class DailyReportResource extends Resource
 {
-    protected static ?string $model = DailyReport::class;
+    protected static ?string $model = Dailyreport::class;
 
     protected static ?string $navigationGroup = 'Operasional IT';
 
@@ -277,13 +277,13 @@ class DailyReportResource extends Resource
 
                         Forms\Components\Placeholder::make('reviewer_info')
                             ->label('Direview Oleh')
-                            ->content(fn(?DailyReport $record) => $record?->reviewer?->name ?? '-'),
+                            ->content(fn(?Dailyreport $record) => $record?->reviewer?->name ?? '-'),
 
                         Forms\Components\Placeholder::make('reviewed_at_info')
                             ->label('Tanggal Review')
-                            ->content(fn(?DailyReport $record) => $record?->reviewed_at?->format('d M Y H:i') ?? '-'),
+                            ->content(fn(?Dailyreport $record) => $record?->reviewed_at?->format('d M Y H:i') ?? '-'),
                     ])
-                    ->visible(fn(?DailyReport $record) => static::isKepalaIt() || filled($record?->review_note))
+                    ->visible(fn(?Dailyreport $record) => static::isKepalaIt() || filled($record?->review_note))
                     ->columns(2),
             ]);
     }
@@ -313,7 +313,7 @@ class DailyReportResource extends Resource
                     ->searchable()
                     ->limit(30)
                     ->placeholder('-')
-                    ->description(fn(DailyReport $record): ?string => data_get($record->asset, 'code')),
+                    ->description(fn(Dailyreport $record): ?string => data_get($record->asset, 'code')),
 
                 Tables\Columns\TextColumn::make('priority')
                     ->label('Prioritas')
@@ -455,11 +455,11 @@ class DailyReportResource extends Resource
                     ->modalHeading('Kirim laporan?')
                     ->modalDescription('Setelah dikirim, laporan akan masuk ke proses review Kepala IT.')
                     ->visible(
-                        fn(DailyReport $record): bool =>
+                        fn(Dailyreport $record): bool =>
                         $record->user_id === auth()->id()
                             && $record->review_status === 'draft'
                     )
-                    ->action(function (DailyReport $record): void {
+                    ->action(function (Dailyreport $record): void {
                         $record->update([
                             'review_status' => 'dikirim',
                         ]);
@@ -477,11 +477,11 @@ class DailyReportResource extends Resource
                             ->required(),
                     ])
                     ->visible(
-                        fn(DailyReport $record): bool =>
+                        fn(Dailyreport $record): bool =>
                         static::isKepalaIt()
                             && $record->review_status === 'dikirim'
                     )
-                    ->action(function (DailyReport $record, array $data): void {
+                    ->action(function (Dailyreport $record, array $data): void {
                         $record->update([
                             'review_status' => 'direview',
                             'review_note' => $data['review_note'],
@@ -492,7 +492,7 @@ class DailyReportResource extends Resource
 
                 Tables\Actions\EditAction::make()
                     ->visible(
-                        fn(DailyReport $record): bool =>
+                        fn(Dailyreport $record): bool =>
                         static::isKepalaIt()
                             || (
                                 $record->user_id === auth()->id()
@@ -502,7 +502,7 @@ class DailyReportResource extends Resource
 
                 Tables\Actions\DeleteAction::make()
                     ->visible(
-                        fn(DailyReport $record): bool =>
+                        fn(Dailyreport $record): bool =>
                         static::isKepalaIt()
                             || (
                                 $record->user_id === auth()->id()

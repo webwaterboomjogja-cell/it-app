@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReportSignatoryResource\Pages;
-use App\Models\ReportSignatory;
+use App\Models\Reportsignatory;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,7 +13,7 @@ use Filament\Tables\Table;
 class ReportSignatoryResource extends Resource
 {
     protected static ?string $model =
-    ReportSignatory::class;
+    Reportsignatory::class;
 
     protected static ?string $navigationIcon =
     'heroicon-o-pencil-square';

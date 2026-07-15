@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\WorkCategoryResource\Pages;
-use App\Models\WorkCategory;
+use App\Models\Workcategory;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,7 +12,7 @@ use Filament\Tables\Table;
 
 class WorkCategoryResource extends Resource
 {
-    protected static ?string $model = WorkCategory::class;
+    protected static ?string $model = Workcategory::class;
 
     protected static ?string $navigationGroup = 'Master Data';
 
@@ -30,7 +30,7 @@ class WorkCategoryResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) WorkCategory::count();
+        return (string) Workcategory::count();
     }
 
     public static function getNavigationBadgeColor(): string|array|null
@@ -115,7 +115,7 @@ class WorkCategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Kategori')
-                    ->description(fn(WorkCategory $record): ?string => $record->description)
+                    ->description(fn(Workcategory $record): ?string => $record->description)
                     ->searchable()
                     ->sortable()
                     ->weight('bold')

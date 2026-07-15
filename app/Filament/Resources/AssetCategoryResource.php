@@ -31,7 +31,7 @@ class AssetCategoryResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) AssetCategory::count();
+        return (string) Assetcategory::count();
     }
 
     public static function getNavigationBadgeColor(): string|array|null
@@ -117,7 +117,7 @@ class AssetCategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Kategori')
-                    ->description(fn (AssetCategory $record): ?string => $record->description)
+                    ->description(fn (Assetcategory $record): ?string => $record->description)
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
