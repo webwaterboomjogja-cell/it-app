@@ -30,7 +30,7 @@ class ScheduleTypeResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) ScheduleType::count();
+        return (string) Scheduletype::count();
     }
 
     public static function getNavigationBadgeColor(): string|array|null
@@ -124,7 +124,7 @@ class ScheduleTypeResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Jadwal')
-                    ->description(fn(ScheduleType $record): ?string => $record->description)
+                    ->description(fn(Scheduletype $record): ?string => $record->description)
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
