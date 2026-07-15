@@ -7,7 +7,7 @@ use App\Models\Devisions;
 use App\Models\Division;
 use App\Models\Location;
 use App\Models\Locations;
-use App\Models\ScheduleType;
+use App\Models\Scheduletype;
 use App\Models\User;
 use App\Models\WorkCategory;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -45,7 +45,7 @@ class DashboardStatsWidget extends BaseWidget
                 ->descriptionIcon('heroicon-m-wrench-screwdriver')
                 ->color('danger'),
 
-            Stat::make('Jenis Jadwal', ScheduleType::count())
+            Stat::make('Jenis Jadwal', Scheduletype::count())
                 ->description('Tipe jadwal maintenance')
                 ->descriptionIcon('heroicon-m-calendar-days')
                 ->color('gray'),
