@@ -521,7 +521,7 @@ class DailyReportResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDailyReports::route('/'),
+            'index' => Pages\ListDailyreports::route('/'),
             'create' => Pages\CreateDailyReport::route('/create'),
             'view' => Pages\ViewDailyReport::route('/{record}'),
             'edit' => Pages\EditDailyReport::route('/{record}/edit'),
