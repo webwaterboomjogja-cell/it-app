@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ScheduleTypeResource\Pages;
-use App\Models\ScheduleType;
+use App\Models\Scheduletype;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,7 +12,7 @@ use Filament\Tables\Table;
 
 class ScheduleTypeResource extends Resource
 {
-    protected static ?string $model = ScheduleType::class;
+    protected static ?string $model = Scheduletype::class;
 
     protected static ?string $navigationGroup = 'Master Data';
 
