@@ -5,12 +5,12 @@ namespace App\Filament\Resources\DailyreportResource\Pages;
 use App\Filament\Resources\DailyreportResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use App\Exports\DailyReportsExport;
+use App\Exports\DailyreportsExport;
 use App\Filament\Widgets\DailyReportStatsOverview;
 use App\Filament\Widgets\FrequentProblemAssetsTable;
 use App\Models\Itassests;
 use App\Models\User;
-use App\Models\WorkCategory;
+use App\Models\Workcategory;
 use Filament\Forms;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -74,7 +74,7 @@ class ListDailyreports extends ListRecords
 
                             Forms\Components\Select::make('work_category_id')
                                 ->label('Kategori Pekerjaan')
-                                ->options(fn() => WorkCategory::query()
+                                ->options(fn() => Workcategory::query()
                                     ->orderBy('name')
                                     ->pluck('name', 'id')
                                     ->toArray())

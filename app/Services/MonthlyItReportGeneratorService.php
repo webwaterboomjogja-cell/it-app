@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\DailyItReport;
+
 use App\Models\Dailyreport;
 use App\Models\Itassests;
 use App\Models\ItSchedule;

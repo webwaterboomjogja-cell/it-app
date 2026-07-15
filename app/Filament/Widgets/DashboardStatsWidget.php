@@ -2,14 +2,13 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\AssetCategory;
+use App\Models\Assetcategory;
 use App\Models\Devisions;
-use App\Models\Division;
-use App\Models\Location;
+
 use App\Models\Locations;
 use App\Models\Scheduletype;
 use App\Models\User;
-use App\Models\WorkCategory;
+use App\Models\Workcategory;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -35,12 +34,12 @@ class DashboardStatsWidget extends BaseWidget
                 ->descriptionIcon('heroicon-m-map-pin')
                 ->color('warning'),
 
-            Stat::make('Kategori Aset', AssetCategory::count())
+            Stat::make('Kategori Aset', Assetcategory::count())
                 ->description('Pengelompokan aset IT')
                 ->descriptionIcon('heroicon-m-squares-2x2')
                 ->color('info'),
 
-            Stat::make('Kategori Pekerjaan', WorkCategory::count())
+            Stat::make('Kategori Pekerjaan', Workcategory::count())
                 ->description('Jenis pekerjaan IT')
                 ->descriptionIcon('heroicon-m-wrench-screwdriver')
                 ->color('danger'),

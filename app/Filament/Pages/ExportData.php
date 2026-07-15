@@ -6,12 +6,12 @@ use App\Exports\AssetsExport;
 use App\Exports\DailyReportsExport;
 use App\Exports\MonthlyItReportExport;
 use App\Models\AssetCategory;
-use App\Models\DailyReport;
+use App\Models\Dailyreport;
 use App\Models\Itassests;
 
 use App\Models\Locations;
 use App\Models\User;
-use App\Models\WorkCategory;
+use App\Models\Workcategory;
 use App\Services\Exports\AssetExportService;
 use App\Services\Exports\DailyReportExportService;
 use App\Services\Exports\ExportArchiveService;
@@ -293,7 +293,7 @@ class ExportData extends Page implements HasForms
                             )
                             ->options(
                                 fn (): array =>
-                                    WorkCategory::query()
+                                    Workcategory::query()
                                         ->orderBy('name')
                                         ->pluck(
                                             'name',

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\DailyReport;
+use App\Models\Dailyreport;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 

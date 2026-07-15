@@ -41,7 +41,7 @@ class Dailyreport extends Model
 
     protected static function booted(): void
     {
-        static::saving(function (DailyReport $report) {
+        static::saving(function (Dailyreport $report) {
             if ($report->start_time && $report->end_time) {
                 $reportDate = $report->report_date
                     ? $report->report_date->format('Y-m-d')
@@ -70,7 +70,7 @@ class Dailyreport extends Model
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(WorkCategory::class, 'work_category_id');
+        return $this->belongsTo(Workcategory::class, 'work_category_id');
     }
 
     public function reviewer(): BelongsTo

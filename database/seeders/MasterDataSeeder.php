@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Division;
-use App\Models\Location;
-use App\Models\AssetCategory;
+
+use App\Models\Assetcategory;
 use App\Models\Devisions;
 use App\Models\Locations;
-use App\Models\WorkCategory;
+use App\Models\Workcategory;
 use App\Models\ScheduleType;
 use Illuminate\Database\Seeder;
 
@@ -62,7 +61,7 @@ class MasterDataSeeder extends Seeder
         ];
 
         foreach ($assetCategories as $index => $category) {
-            AssetCategory::updateOrCreate(
+            Assetcategory::updateOrCreate(
                 ['code' => $category['code']],
                 [
                     'name' => $category['name'],
@@ -82,7 +81,7 @@ class MasterDataSeeder extends Seeder
         ];
 
         foreach ($workCategories as $index => $category) {
-            WorkCategory::updateOrCreate(
+            Workcategory::updateOrCreate(
                 ['code' => $category['code']],
                 [
                     'name' => $category['name'],

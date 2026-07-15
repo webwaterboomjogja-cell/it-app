@@ -14,4 +14,6 @@ class Scheduletype extends Model
         'is_active',
         'sort_order',
     ];
+
+    protected $table = 'scheduletypes';
 }
