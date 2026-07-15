@@ -6,9 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Exports\ItassetsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+
+Route::redirect('/', '/admin');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/it-schedules/calendar/download', ItScheduleCalendarDownloadController::class)

@@ -34,6 +34,13 @@ class Itassests extends Model
         'purchase_date' => 'date',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'purchase_date' => 'date',
+        ];
+    }
+
     protected static function booted(): void
     {
         static::creating(function (Itassests $asset) {

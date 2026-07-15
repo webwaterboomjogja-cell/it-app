@@ -30,11 +30,14 @@ class Dailyreport extends Model
         'review_note',
     ];
 
-    protected $casts = [
-        'report_date' => 'date',
-        'attachments' => 'array',
-        'reviewed_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'report_date' => 'date',
+            'attachments' => 'array',
+            'reviewed_at' => 'datetime',
+        ];
+    }
 
     protected static function booted(): void
     {

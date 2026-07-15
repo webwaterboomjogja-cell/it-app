@@ -52,10 +52,7 @@
             data_get($scheduleSummary, 'by_staff', [])
         );
 
-        /*
-         * Mengubah output RichEditor menjadi teks aman
-         * tetapi tetap mempertahankan pergantian baris.
-         */
+        
         $formatRichText = function (?string $value): string {
             $value = $value ?? '';
 

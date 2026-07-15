@@ -3,100 +3,440 @@
 namespace App\Exports;
 
 use App\Models\DailyReport;
-use Illuminate\Database\Eloquent\Builder;
-use Maatwebsite\Excel\Concerns\FromQuery;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use App\Services\Exports\DailyReportExportService;
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use Maatwebsite\Excel\Concerns\WithCustomStartCell;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithProperties;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
+use Throwable;
 
-class DailyReportsExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize, WithTitle
+class DailyReportsExport implements
+    FromCollection,
+    WithMapping,
+    WithHeadings,
+    WithCustomStartCell,
+    WithColumnWidths,
+    WithEvents,
+    WithTitle,
+    WithProperties,
+    WithStrictNullComparison
 {
-    public function __construct(
-        protected array $filters = []
-    ) {}
+    private int $number = 0;
 
-    public function query(): Builder
+    private int $totalReports = 0;
+
+    private int $totalDuration = 0;
+
+    public function __construct(
+        private readonly array $filters,
+        private readonly string $generatedBy,
+        private readonly string $generatedAt,
+        private readonly ?string $documentNumber = null,
+        private readonly string $documentStatus = 'draft',
+    ) {
+    }
+
+    public function collection(): Collection
     {
-        return DailyReport::query()
-            ->with(['user', 'category', 'asset', 'reviewer'])
-            ->when($this->filters['start_date'] ?? null, function (Builder $query, string $date) {
-                $query->whereDate('report_date', '>=', $date);
-            })
-            ->when($this->filters['end_date'] ?? null, function (Builder $query, string $date) {
-                $query->whereDate('report_date', '<=', $date);
-            })
-            ->when($this->filters['user_id'] ?? null, function (Builder $query, string $userId) {
-                $query->where('user_id', $userId);
-            })
-            ->when($this->filters['work_category_id'] ?? null, function (Builder $query, string $categoryId) {
-                $query->where('work_category_id', $categoryId);
-            })
-            ->when($this->filters['asset_id'] ?? null, function (Builder $query, string $assetId) {
-                $query->where('asset_id', $assetId);
-            })
-            ->when($this->filters['work_status'] ?? null, function (Builder $query, string $status) {
-                $query->where('work_status', $status);
-            })
-            ->when($this->filters['review_status'] ?? null, function (Builder $query, string $status) {
-                $query->where('review_status', $status);
-            })
-            ->when($this->filters['priority'] ?? null, function (Builder $query, string $priority) {
-                $query->where('priority', $priority);
-            })
-            ->orderByDesc('report_date')
-            ->orderByDesc('created_at');
+        $reports = app(
+            DailyReportExportService::class
+        )->get($this->filters);
+
+        $this->totalReports =
+            $reports->count();
+
+        $this->totalDuration =
+            (int) $reports->sum(
+                'duration_minutes'
+            );
+
+        return $reports;
+    }
+
+    public function map($report): array
+    {
+        /** @var Dailyreport $report */
+
+        return [
+            ++$this->number,
+
+            $this->formatDate(
+                $report->report_date
+            ),
+
+            $report->user?->name ?: '-',
+
+            $report->category?->name
+                ?: '-',
+
+            $this->plainText(
+                $report->title
+            ),
+
+            $this->plainText(
+                $report->description
+            ),
+
+            $this->formatText(
+                $report->priority
+            ),
+
+            $report->location ?: '-',
+
+            $this->formatTime(
+                $report->start_time
+            ),
+
+            $this->formatTime(
+                $report->end_time
+            ),
+
+            $this->formatDuration(
+                $report->duration_minutes
+            ),
+
+            $this->formatText(
+                $report->work_status
+            ),
+
+            $this->formatText(
+                $report->review_status
+            ),
+
+            $this->assetLabel($report),
+
+            $this->plainText(
+                $report->obstacle
+            ),
+
+            $this->plainText(
+                $report->solution
+            ),
+
+            $report->reviewer?->name
+                ?: '-',
+
+            $this->plainText(
+                $report->review_note
+            ),
+        ];
     }
 
     public function headings(): array
     {
         return [
+            'No.',
             'Tanggal',
             'Staff IT',
-            'Kategori',
-            'Aset Terkait',
-            'Kode Aset',
-            'Prioritas',
+            'Kategori Pekerjaan',
             'Judul Pekerjaan',
+            'Deskripsi',
+            'Prioritas',
             'Lokasi',
             'Jam Mulai',
             'Jam Selesai',
             'Durasi',
             'Status Pekerjaan',
             'Status Review',
-            'Deskripsi',
+            'Aset Terkait',
             'Kendala',
             'Solusi',
-            'Direview Oleh',
-            'Tanggal Review',
+            'Reviewer',
             'Catatan Review',
-            'Dibuat Pada',
         ];
     }
 
-    public function map($report): array
+    public function startCell(): string
+    {
+        return 'A7';
+    }
+
+    public function columnWidths(): array
     {
         return [
-            $report->report_date?->format('d/m/Y'),
-            $report->user?->name ?? '-',
-            $report->category?->name ?? '-',
-            $report->asset?->name ?? '-',
-            $this->getAssetCode($report),
-            $this->formatPriority($report->priority),
-            $report->title,
-            $report->location ?? '-',
-            $report->start_time ? substr($report->start_time, 0, 5) : '-',
-            $report->end_time ? substr($report->end_time, 0, 5) : '-',
-            $this->formatDuration($report->duration_minutes),
-            $this->formatWorkStatus($report->work_status),
-            $this->formatReviewStatus($report->review_status),
-            $this->cleanText($report->description),
-            $this->cleanText($report->obstacle),
-            $this->cleanText($report->solution),
-            $report->reviewer?->name ?? '-',
-            $report->reviewed_at?->format('d/m/Y H:i') ?? '-',
-            $this->cleanText($report->review_note),
-            $report->created_at?->format('d/m/Y H:i'),
+            'A' => 7,
+            'B' => 14,
+            'C' => 22,
+            'D' => 22,
+            'E' => 32,
+            'F' => 38,
+            'G' => 14,
+            'H' => 22,
+            'I' => 13,
+            'J' => 13,
+            'K' => 18,
+            'L' => 18,
+            'M' => 17,
+            'N' => 25,
+            'O' => 35,
+            'P' => 35,
+            'Q' => 22,
+            'R' => 35,
+        ];
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class =>
+                function (
+                    AfterSheet $event
+                ): void {
+                    $sheet = $event->sheet
+                        ->getDelegate();
+
+                    $service = app(
+                        DailyReportExportService::class
+                    );
+
+                    $summary =
+                        $service->filterSummary(
+                            $this->filters
+                        );
+
+                    $companyName = config(
+                        'company.name',
+                        config('app.name')
+                    );
+
+                    $companyDescription =
+                        collect([
+                            config(
+                                'company.division'
+                            ),
+                            config(
+                                'company.address'
+                            ),
+                        ])
+                            ->filter()
+                            ->implode(' | ');
+
+                    $filterLine = collect([
+                        "Staff: {$summary['staff']}",
+
+                        "Kategori: {$summary['category']}",
+
+                        "Status: {$summary['work_status']}",
+
+                        "Review: {$summary['review_status']}",
+
+                        "Prioritas: {$summary['priority']}",
+
+                        "Lokasi: {$summary['location']}",
+
+                        "Durasi: {$summary['duration']}",
+
+                        "Aset: {$summary['asset']}",
+                    ])->implode(' | ');
+
+                    $durationLabel =
+                        $service->formatDuration(
+                            $this->totalDuration
+                        );
+
+                    foreach (
+                        range(1, 6)
+                        as $row
+                    ) {
+                        $sheet->mergeCells(
+                            "A{$row}:R{$row}"
+                        );
+                    }
+
+                    $sheet->setCellValue(
+                        'A1',
+                        strtoupper(
+                            $companyName
+                        )
+                    );
+
+                    $sheet->setCellValue(
+                        'A2',
+                        $companyDescription
+                    );
+
+                    $sheet->setCellValue(
+                        'A3',
+                        'LAPORAN HARIAN DIVISI IT'
+                    );
+
+                    $sheet->setCellValue(
+                        'A4',
+                        sprintf(
+                            'Nomor Dokumen: %s | Status: %s | Periode: %s',
+                            $this
+                                ->documentNumber
+                                ?? '-',
+                            strtoupper(
+                                $this
+                                    ->documentStatus
+                            ),
+                            $summary['period']
+                        )
+                    );
+
+                    $sheet->setCellValue(
+                        'A5',
+                        $filterLine
+                    );
+
+                    $sheet->setCellValue(
+                        'A6',
+                        sprintf(
+                            'Total laporan: %s | Total durasi: %s | Dibuat: %s | Oleh: %s',
+                            number_format(
+                                $this
+                                    ->totalReports,
+                                0,
+                                ',',
+                                '.'
+                            ),
+                            $durationLabel,
+                            $this->generatedAt,
+                            $this->generatedBy
+                        )
+                    );
+
+                    $sheet
+                        ->getStyle('A1:R6')
+                        ->getAlignment()
+                        ->setHorizontal(
+                            Alignment::
+                                HORIZONTAL_CENTER
+                        )
+                        ->setVertical(
+                            Alignment::
+                                VERTICAL_CENTER
+                        )
+                        ->setWrapText(true);
+
+                    $sheet
+                        ->getStyle('A1:R1')
+                        ->getFont()
+                        ->setBold(true)
+                        ->setSize(16);
+
+                    $sheet
+                        ->getStyle('A3:R3')
+                        ->getFont()
+                        ->setBold(true)
+                        ->setSize(13);
+
+                    $sheet
+                        ->getStyle('A7:R7')
+                        ->applyFromArray([
+                            'font' => [
+                                'bold' => true,
+
+                                'color' => [
+                                    'argb' =>
+                                        'FFFFFFFF',
+                                ],
+                            ],
+
+                            'fill' => [
+                                'fillType' =>
+                                    Fill::FILL_SOLID,
+
+                                'startColor' => [
+                                    'argb' =>
+                                        'FF1F4E78',
+                                ],
+                            ],
+
+                            'alignment' => [
+                                'horizontal' =>
+                                    Alignment::
+                                        HORIZONTAL_CENTER,
+
+                                'vertical' =>
+                                    Alignment::
+                                        VERTICAL_CENTER,
+
+                                'wrapText' =>
+                                    true,
+                            ],
+
+                            'borders' => [
+                                'allBorders' => [
+                                    'borderStyle' =>
+                                        Border::
+                                            BORDER_THIN,
+                                ],
+                            ],
+                        ]);
+
+                    $lastRow = $sheet
+                        ->getHighestRow();
+
+                    if ($lastRow >= 8) {
+                        $sheet
+                            ->getStyle(
+                                "A8:R{$lastRow}"
+                            )
+                            ->applyFromArray([
+                                'alignment' => [
+                                    'vertical' =>
+                                        Alignment::
+                                            VERTICAL_TOP,
+
+                                    'wrapText' =>
+                                        true,
+                                ],
+
+                                'borders' => [
+                                    'allBorders' => [
+                                        'borderStyle' =>
+                                            Border::
+                                                BORDER_THIN,
+
+                                        'color' => [
+                                            'argb' =>
+                                                'FFD9D9D9',
+                                        ],
+                                    ],
+                                ],
+                            ]);
+
+                        $sheet->setAutoFilter(
+                            "A7:R{$lastRow}"
+                        );
+                    }
+
+                    $sheet->freezePane('A8');
+
+                    $sheet->getPageSetup()
+                        ->setOrientation(
+                            PageSetup::
+                                ORIENTATION_LANDSCAPE
+                        )
+                        ->setPaperSize(
+                            PageSetup::
+                                PAPERSIZE_A3
+                        )
+                        ->setFitToWidth(1)
+                        ->setFitToHeight(0);
+
+                    $sheet->getHeaderFooter()
+                        ->setOddFooter(
+                            '&L' .
+                            $companyName .
+                            '&RHalaman &P dari &N'
+                        );
+                },
         ];
     }
 
@@ -105,68 +445,139 @@ class DailyReportsExport implements FromQuery, WithHeadings, WithMapping, Should
         return 'Laporan Harian IT';
     }
 
-    protected function getAssetCode($report): string
+    public function properties(): array
     {
-        return data_get($report->asset, 'asset_code') ?? '-';
+        return [
+            'creator' =>
+                $this->generatedBy,
+
+            'lastModifiedBy' =>
+                $this->generatedBy,
+
+            'title' =>
+                'Laporan Harian Divisi IT',
+
+            'subject' =>
+                'Laporan Harian IT',
+
+            'category' =>
+                'Laporan IT',
+
+            'company' =>
+                config('company.name'),
+        ];
     }
 
-    protected function formatDuration(?int $minutes): string
-    {
-        if (! $minutes) {
+    private function assetLabel(
+        Dailyreport $report
+    ): string {
+        if (! $report->asset) {
             return '-';
         }
 
-        $hours = intdiv($minutes, 60);
-        $remainingMinutes = $minutes % 60;
-
-        if ($hours > 0 && $remainingMinutes > 0) {
-            return "{$hours} jam {$remainingMinutes} menit";
-        }
-
-        if ($hours > 0) {
-            return "{$hours} jam";
-        }
-
-        return "{$remainingMinutes} menit";
+        return collect([
+            $report->asset->code,
+            $report->asset->name,
+        ])
+            ->filter()
+            ->implode(' — ');
     }
 
-    protected function formatPriority(?string $priority): string
-    {
-        return match ($priority) {
-            'rendah' => 'Rendah',
-            'normal' => 'Normal',
-            'tinggi' => 'Tinggi',
-            'urgent' => 'Urgent',
-            default => '-',
-        };
+    private function formatText(
+        mixed $value
+    ): string {
+        return filled($value)
+            ? Str::headline(
+                (string) $value
+            )
+            : '-';
     }
 
-    protected function formatWorkStatus(?string $status): string
-    {
-        return match ($status) {
-            'selesai' => 'Selesai',
-            'proses' => 'Proses',
-            'tertunda' => 'Tertunda',
-            default => '-',
-        };
-    }
-
-    protected function formatReviewStatus(?string $status): string
-    {
-        return match ($status) {
-            'draft' => 'Draft',
-            'dikirim' => 'Dikirim',
-            'direview' => 'Direview',
-            default => '-',
-        };
-    }
-
-    protected function cleanText(?string $text): string
-    {
-        if (! $text) {
+    private function formatDate(
+        mixed $value
+    ): string {
+        if (blank($value)) {
             return '-';
         }
 
-        return trim(strip_tags($text));
+        try {
+            return Carbon::parse($value)
+                ->format('d/m/Y');
+        } catch (Throwable) {
+            return (string) $value;
+        }
+    }
+
+    private function formatTime(
+        mixed $value
+    ): string {
+        if (blank($value)) {
+            return '-';
+        }
+
+        $time = trim(
+            explode(
+                ',',
+                (string) $value
+            )[0]
+        );
+
+        foreach (
+            ['H:i:s', 'H:i']
+            as $format
+        ) {
+            try {
+                return Carbon::createFromFormat(
+                    $format,
+                    $time
+                )->format('H:i');
+            } catch (Throwable) {
+                //
+            }
+        }
+
+        return $time;
+    }
+
+    private function formatDuration(
+        mixed $minutes
+    ): string {
+        return app(
+            DailyReportExportService::class
+        )->formatDuration(
+            is_numeric($minutes)
+                ? (int) $minutes
+                : null
+        );
+    }
+
+    private function plainText(
+        mixed $value
+    ): string {
+        if (blank($value)) {
+            return '-';
+        }
+
+        $text = html_entity_decode(
+            (string) $value,
+            ENT_QUOTES | ENT_HTML5,
+            'UTF-8'
+        );
+
+        $text = strip_tags($text);
+
+        $text = str_replace(
+            ["\u{00A0}", '&nbsp;'],
+            ' ',
+            $text
+        );
+
+        return trim(
+            preg_replace(
+                '/[ \t]+/',
+                ' ',
+                $text
+            )
+        );
     }
 }

@@ -73,7 +73,8 @@ class DailyReportResource extends Resource
 
                         Forms\Components\DatePicker::make('report_date')
                             ->label('Tanggal Laporan')
-                            ->default(now())
+                            ->default(now()->toDateString())
+                            ->displayFormat('d/m/Y')
                             ->maxDate(now())
                             ->required(),
 
@@ -128,7 +129,15 @@ class DailyReportResource extends Resource
                             ->label('Jam Mulai')
                             ->seconds(false)
                             ->native(false)
+                            ->displayFormat('H:i')
                             ->live()
+                            ->dehydrateStateUsing(function ($state) {
+                                if (blank($state)) {
+                                    return null;
+                                }
+
+                                return Carbon::parse($state)->format('H:i:s');
+                            })
                             ->rules([
                                 'required_with:end_time',
                             ]),
@@ -137,7 +146,15 @@ class DailyReportResource extends Resource
                             ->label('Jam Selesai')
                             ->seconds(false)
                             ->native(false)
+                            ->displayFormat('H:i')
                             ->live()
+                            ->dehydrateStateUsing(function ($state) {
+                                if (blank($state)) {
+                                    return null;
+                                }
+
+                                return Carbon::parse($state)->format('H:i:s');
+                            })
                             ->rules([
                                 'required_with:start_time',
                                 'after:start_time',
@@ -148,32 +165,37 @@ class DailyReportResource extends Resource
                             ->content(function (Get $get): string {
                                 $startTime = $get('start_time');
                                 $endTime = $get('end_time');
-                                $reportDate = $get('report_date') ?? now()->format('Y-m-d');
 
-                                if (! $startTime || ! $endTime) {
+                                if (blank($startTime) || blank($endTime)) {
                                     return '-';
                                 }
 
-                                $start = Carbon::parse($reportDate . ' ' . $startTime);
-                                $end = Carbon::parse($reportDate . ' ' . $endTime);
+                                try {
 
-                                if ($end->lessThanOrEqualTo($start)) {
-                                    return 'Jam selesai harus lebih besar dari jam mulai';
+                                    $start = Carbon::parse($startTime);
+                                    $end = Carbon::parse($endTime);
+
+                                    if ($end->lessThanOrEqualTo($start)) {
+                                        return 'Jam selesai harus lebih besar dari jam mulai';
+                                    }
+
+                                    $minutes = (int) $start->diffInMinutes($end);
+
+                                    $hours = intdiv($minutes, 60);
+                                    $remainingMinutes = $minutes % 60;
+
+                                    if ($hours > 0 && $remainingMinutes > 0) {
+                                        return "{$hours} jam {$remainingMinutes} menit";
+                                    }
+
+                                    if ($hours > 0) {
+                                        return "{$hours} jam";
+                                    }
+
+                                    return "{$remainingMinutes} menit";
+                                } catch (\Throwable $exception) {
+                                    return 'Format jam tidak valid';
                                 }
-
-                                $minutes = $start->diffInMinutes($end);
-                                $hours = intdiv($minutes, 60);
-                                $remainingMinutes = $minutes % 60;
-
-                                if ($hours > 0 && $remainingMinutes > 0) {
-                                    return "{$hours} jam {$remainingMinutes} menit";
-                                }
-
-                                if ($hours > 0) {
-                                    return "{$hours} jam";
-                                }
-
-                                return "{$remainingMinutes} menit";
                             }),
 
                         Forms\Components\RichEditor::make('description')

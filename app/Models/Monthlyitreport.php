@@ -78,11 +78,6 @@ class Monthlyitreport extends Model
         'finalized_at' => 'datetime',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relasi
-    |--------------------------------------------------------------------------
-    */
 
     public function generatedBy(): BelongsTo
     {
@@ -100,11 +95,6 @@ class Monthlyitreport extends Model
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Helper
-    |--------------------------------------------------------------------------
-    */
 
     public static function statusOptions(): array
     {
