@@ -18,6 +18,13 @@ class QuickAccessWidget extends Widget
 
     protected static ?int $sort = 3;
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasAnyRole([
+            'super_admin'
+        ]) ?? false;
+    }
+
     protected function getViewData(): array
     {
         return [

@@ -23,6 +23,13 @@ class ItDashboardStats extends BaseWidget
     protected ?string $description =
     'Monitoring aset, jadwal, dan laporan pekerjaan tim IT.';
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasAnyRole([
+            'super_admin'
+        ]) ?? false;
+    }
+
     protected function getStats(): array
     {
         $totalAssets = Itassests::query()->count();

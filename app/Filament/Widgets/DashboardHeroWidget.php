@@ -11,4 +11,11 @@ class DashboardHeroWidget extends Widget
     protected int | string | array $columnSpan = 'full';
 
     protected static ?int $sort = 1;
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasAnyRole([
+            'super_admin'
+        ]) ?? false;
+    }
 }

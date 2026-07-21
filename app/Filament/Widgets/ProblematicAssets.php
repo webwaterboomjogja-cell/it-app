@@ -15,6 +15,13 @@ class ProblematicAssets extends BaseWidget
 
     protected int|string|array $columnSpan = 1;
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasAnyRole([
+            'super_admin'
+        ]) ?? false;
+    }
+
     public function table(Table $table): Table
     {
         return $table

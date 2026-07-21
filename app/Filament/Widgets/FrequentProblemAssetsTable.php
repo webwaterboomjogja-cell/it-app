@@ -20,8 +20,7 @@ class FrequentProblemAssetsTable extends BaseWidget
     public static function canView(): bool
     {
         return auth()->user()?->hasAnyRole([
-            'super_admin',
-            'kepala_it',
+            'super_admin'
         ]) ?? false;
     }
 

@@ -16,6 +16,13 @@ class DashboardStatsWidget extends BaseWidget
 {
     protected static ?int $sort = 2;
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasAnyRole([
+            'super_admin'
+        ]) ?? false;
+    }
+
     protected function getStats(): array
     {
         return [

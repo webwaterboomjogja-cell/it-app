@@ -31,7 +31,7 @@ class InventoryDashboard extends Page
         }
 
         return $user->can(
-            'page_ItScheduleCalendar'
+            'page_InventoryDashboard'
         );
     }
 }
