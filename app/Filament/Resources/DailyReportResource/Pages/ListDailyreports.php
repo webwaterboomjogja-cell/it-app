@@ -5,7 +5,7 @@ namespace App\Filament\Resources\DailyreportResource\Pages;
 use App\Filament\Resources\DailyreportResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use App\Exports\DailyreportsExport;
+use App\Exports\DailyReportsExport;
 use App\Filament\Widgets\DailyReportStatsOverview;
 use App\Filament\Widgets\FrequentProblemAssetsTable;
 use App\Models\Itassests;
