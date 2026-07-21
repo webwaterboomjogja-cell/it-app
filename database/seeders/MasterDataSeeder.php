@@ -7,7 +7,7 @@ use App\Models\Assetcategory;
 use App\Models\Devisions;
 use App\Models\Locations;
 use App\Models\Workcategory;
-use App\Models\ScheduleType;
+use App\Models\Scheduletype;
 use Illuminate\Database\Seeder;
 
 class MasterDataSeeder extends Seeder
@@ -99,7 +99,7 @@ class MasterDataSeeder extends Seeder
         ];
 
         foreach ($scheduleTypes as $index => $type) {
-            ScheduleType::updateOrCreate(
+            Scheduletype::updateOrCreate(
                 ['code' => $type['code']],
                 [
                     'name' => $type['name'],
