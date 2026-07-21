@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\DailyReport;
+use App\Models\Dailyreport;
 use App\Services\Exports\DailyReportExportService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;

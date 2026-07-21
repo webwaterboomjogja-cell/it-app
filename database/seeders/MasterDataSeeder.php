@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-
 use App\Models\Assetcategory;
 use App\Models\Devisions;
 use App\Models\Locations;

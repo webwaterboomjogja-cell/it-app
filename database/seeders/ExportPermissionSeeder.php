@@ -47,8 +47,6 @@ class ExportPermissionSeeder extends Seeder
             $permissions
         );
 
-    
-
         $headIt = Role::findOrCreate(
             'kepala_it',
             $guard
