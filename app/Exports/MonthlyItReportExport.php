@@ -16,9 +16,11 @@ class MonthlyItReportExport implements
     private array $data;
 
     public function __construct(
-        private readonly Monthlyitreport $report,
-        private readonly string $generatedBy,
-        private readonly string $generatedAt
+        protected Monthlyitreport $report,
+        protected string $generatedBy,
+        protected string $generatedAt,
+        protected ?string $documentNumber = null,
+        protected ?string $documentStatus = null,
     ) {
         $this->data = app(
             MonthlyReportExportService::class
