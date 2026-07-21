@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\DailyReport;
+use App\Models\Dailyreport;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
