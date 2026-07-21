@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\DailyreportResource\Pages;
 
-use App\Filament\Resources\DailyreportResource;
+use App\Filament\Resources\DailyReportResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use App\Exports\DailyReportsExport;
@@ -16,7 +16,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ListDailyreports extends ListRecords
 {
-    protected static string $resource = DailyreportResource::class;
+    protected static string $resource = DailyReportResource::class;
 
     protected function isKepalaIt(): bool
     {
