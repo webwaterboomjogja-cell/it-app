@@ -26,6 +26,23 @@ class ItScheduleCalendar extends Page
 
     public string $month;
 
+    public static function canAccess(): bool
+    {
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        if ($user->hasRole('super_admin')) {
+            return true;
+        }
+
+        return $user->can(
+            'page_ItScheduleCalendar'
+        );
+    }
+
     public function mount(): void
     {
         $this->month = now()->format('Y-m');
@@ -57,14 +74,14 @@ class ItScheduleCalendar extends Page
 
         $schedules = Itschedule::query()
             ->with('user')
-            ->when($this->user_id, fn ($query) => $query->where('user_id', $this->user_id))
+            ->when($this->user_id, fn($query) => $query->where('user_id', $this->user_id))
             ->whereBetween('schedule_date', [
                 $startCalendar->toDateString(),
                 $endCalendar->toDateString(),
             ])
             ->orderBy('start_time')
             ->get()
-            ->groupBy(fn ($schedule) => $schedule->schedule_date->format('Y-m-d'));
+            ->groupBy(fn($schedule) => $schedule->schedule_date->format('Y-m-d'));
 
         $weeks = [];
         $currentDate = $startCalendar->copy();
