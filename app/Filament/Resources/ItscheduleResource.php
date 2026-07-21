@@ -11,7 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\ItscheduleTemplate;
+use App\Models\Itscheduletemplate;
 
 
 class ItscheduleResource extends Resource
@@ -74,7 +74,7 @@ class ItscheduleResource extends Resource
 
                 Forms\Components\Select::make('template_id')
                     ->label('Template Jadwal')
-                    ->options(fn(): array => ItscheduleTemplate::query()
+                    ->options(fn(): array => Itscheduletemplate::query()
                         ->where('is_active', true)
                         ->orderBy('sort_order')
                         ->orderBy('name')
@@ -90,7 +90,7 @@ class ItscheduleResource extends Resource
                             return;
                         }
 
-                        $template = ItscheduleTemplate::find($state);
+                        $template = Itscheduletemplate::find($state);
 
                         if (! $template) {
                             return;
@@ -108,13 +108,13 @@ class ItscheduleResource extends Resource
                     ->description('Isi jam kerja dan lokasi tugas sesuai kebutuhan.')
                     ->icon('heroicon-o-clock')
                     ->schema([
-                        // Forms\Components\TimePicker::make('start_time')
-                        //     ->label('Jam Mulai')
-                        //     ->seconds(false)
-                        //     ->required(fn(Forms\Get $get): bool => ! in_array($get('type'), [
-                        //         Itschedule::TYPE_LEAVE_DP,
-                        //         Itschedule::TYPE_PERMISSION,
-                        //     ])),
+                        Forms\Components\TimePicker::make('start_time')
+                            ->label('Jam Mulai')
+                            ->seconds(false)
+                            ->required(fn(Forms\Get $get): bool => ! in_array($get('type'), [
+                                Itschedule::TYPE_LEAVE_DP,
+                                Itschedule::TYPE_PERMISSION,
+                            ])),
 
                         Forms\Components\TimePicker::make('start_time')
                             ->label('Jam Mulai')
@@ -122,14 +122,14 @@ class ItscheduleResource extends Resource
                             ->required(fn(Forms\Get $get): bool => Itschedule::requiresTimeAndLocation($get('type'))),
 
 
-                        // Forms\Components\TimePicker::make('end_time')
-                        //     ->label('Jam Selesai')
-                        //     ->seconds(false)
-                        //     ->rule('after:start_time')
-                        //     ->required(fn(Forms\Get $get): bool => ! in_array($get('type'), [
-                        //         Itschedule::TYPE_LEAVE_DP,
-                        //         Itschedule::TYPE_PERMISSION,
-                        //     ])),
+                        Forms\Components\TimePicker::make('end_time')
+                            ->label('Jam Selesai')
+                            ->seconds(false)
+                            ->rule('after:start_time')
+                            ->required(fn(Forms\Get $get): bool => ! in_array($get('type'), [
+                                Itschedule::TYPE_LEAVE_DP,
+                                Itschedule::TYPE_PERMISSION,
+                            ])),
 
                         Forms\Components\TimePicker::make('end_time')
                             ->label('Jam Selesai')
@@ -137,13 +137,13 @@ class ItscheduleResource extends Resource
                             ->rule('after:start_time')
                             ->required(fn(Forms\Get $get): bool => Itschedule::requiresTimeAndLocation($get('type'))),
 
-                        // Forms\Components\TextInput::make('location')
-                        //     ->label('Lokasi Tugas')
-                        //     ->maxLength(255)
-                        //     ->required(fn(Forms\Get $get): bool => ! in_array($get('type'), [
-                        //         Itschedule::TYPE_LEAVE_DP,
-                        //         Itschedule::TYPE_PERMISSION,
-                        //     ])),
+                        Forms\Components\TextInput::make('location')
+                            ->label('Lokasi Tugas')
+                            ->maxLength(255)
+                            ->required(fn(Forms\Get $get): bool => ! in_array($get('type'), [
+                                Itschedule::TYPE_LEAVE_DP,
+                                Itschedule::TYPE_PERMISSION,
+                            ])),
 
                         Forms\Components\TextInput::make('location')
                             ->label('Lokasi Tugas')
