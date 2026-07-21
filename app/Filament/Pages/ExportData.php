@@ -63,8 +63,11 @@ class ExportData extends Page implements HasForms
             return false;
         }
 
-        return $user->hasRole('super_admin', 'admin','kepala_it')
-            || $user->can('page_ExportData');
+        if ($user->hasRole('super_admin')) {
+            return true;
+        }
+
+        return $user->can('page_ExportData');
     }
 
     public function mount(): void
@@ -1248,9 +1251,20 @@ class ExportData extends Page implements HasForms
     private function authorizeReportExport(
         string $reportType
     ): void {
+        $user = auth()->user();
+
+        abort_unless(
+            $user,
+            403,
+            'Sesi login tidak ditemukan. Silakan login kembali.'
+        );
+
+        if ($user->hasRole('super_admin')) {
+            return;
+        }
+
         $permission = match ($reportType) {
-            'assets' =>
-            'export_assets',
+            'assets' => 'export_assets',
 
             'daily_reports' =>
             'export_daily_reports',
@@ -1268,9 +1282,7 @@ class ExportData extends Page implements HasForms
         );
 
         abort_unless(
-            auth()->user()?->can(
-                $permission
-            ),
+            $user->can($permission),
             403,
             'Anda tidak memiliki izin melakukan export ini.'
         );
