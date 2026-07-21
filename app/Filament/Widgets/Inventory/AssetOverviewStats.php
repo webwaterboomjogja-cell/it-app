@@ -10,11 +10,21 @@ class AssetOverviewStats extends BaseWidget
 {
     protected static ?string $pollingInterval = null;
 
-    public static function canView(): bool
+   public static function canView(): bool
     {
-        return auth()->user()?->hasAnyRole([
-            'super_admin'
-        ]) ?? false;
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        if ($user->hasRole('super_admin')) {
+            return true;
+        }
+
+        return $user->can(
+            'widget_AssetOverviewStats'
+        );
     }
 
     protected function getStats(): array

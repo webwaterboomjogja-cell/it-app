@@ -19,9 +19,19 @@ class FrequentProblemAssetsTable extends BaseWidget
 
     public static function canView(): bool
     {
-        return auth()->user()?->hasAnyRole([
-            'super_admin'
-        ]) ?? false;
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        if ($user->hasRole('super_admin')) {
+            return true;
+        }
+
+        return $user->can(
+            'widget_FrequentProblemAssetsTable'
+        );
     }
 
     public function table(Table $table): Table
