@@ -13,7 +13,7 @@ class AssetStatusChart extends ChartWidget
 
     protected static ?string $pollingInterval = null;
 
-    protected int | string | array $columnSpan = 1;
+    protected int | string | array $columnSpan = 4;
 
     public static function canView(): bool
     {

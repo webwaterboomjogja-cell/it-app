@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class StaffWithoutReport extends BaseWidget
 {
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 7;
 
     protected static ?string $heading =
     'Staff Belum Membuat Laporan Hari Ini';

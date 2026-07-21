@@ -9,6 +9,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class AssetOverviewStats extends BaseWidget
 {
     protected static ?string $pollingInterval = null;
+    protected int | string | array $columnSpan = 3;
 
    public static function canView(): bool
     {

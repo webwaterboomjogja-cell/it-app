@@ -13,7 +13,7 @@ class RecentAssetsTable extends BaseWidget
 
     protected static ?string $pollingInterval = null;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 5;
 
     public static function canView(): bool
     {

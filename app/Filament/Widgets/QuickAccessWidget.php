@@ -16,7 +16,7 @@ class QuickAccessWidget extends Widget
 
     protected int | string | array $columnSpan = 'full';
 
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 6;
 
     public static function canView(): bool
     {

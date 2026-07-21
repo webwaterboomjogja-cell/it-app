@@ -14,7 +14,7 @@ class AssetCategoryChart extends ChartWidget
 
     protected static ?string $pollingInterval = null;
 
-    protected int | string | array $columnSpan = 1;
+    protected int | string | array $columnSpan = 2;
 
     public static function canView(): bool
     {
