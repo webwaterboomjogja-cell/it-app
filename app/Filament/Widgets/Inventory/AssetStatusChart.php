@@ -15,6 +15,13 @@ class AssetStatusChart extends ChartWidget
 
     protected int | string | array $columnSpan = 1;
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasAnyRole([
+            'super_admin'
+        ]) ?? false;
+    }
+
     protected function getData(): array
     {
         $active = Itassests::where('status', 'aktif')->count();

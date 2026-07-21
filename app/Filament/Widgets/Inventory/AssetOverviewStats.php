@@ -10,6 +10,13 @@ class AssetOverviewStats extends BaseWidget
 {
     protected static ?string $pollingInterval = null;
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasAnyRole([
+            'super_admin'
+        ]) ?? false;
+    }
+
     protected function getStats(): array
     {
         $totalAssets = Itassests::count();
