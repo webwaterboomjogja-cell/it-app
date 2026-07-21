@@ -12,7 +12,7 @@ use App\Services\ItTeamScheduleGenerator;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 
-use App\Models\ItscheduleTemplate;
+use App\Models\Itscheduletemplate;
 
 
 class ListItschedules extends ListRecords
@@ -70,7 +70,7 @@ class ListItschedules extends ListRecords
                         ->schema([
                             Forms\Components\Select::make('template_id')
                                 ->label('Template Jadwal')
-                                ->options(fn(): array => ItscheduleTemplate::query()
+                                ->options(fn(): array => Itscheduletemplate::query()
                                     ->where('is_active', true)
                                     ->orderBy('sort_order')
                                     ->orderBy('name')
@@ -86,7 +86,7 @@ class ListItschedules extends ListRecords
                                         return;
                                     }
 
-                                    $template = ItscheduleTemplate::find($state);
+                                    $template = Itscheduletemplate::find($state);
 
                                     if (! $template) {
                                         return;
