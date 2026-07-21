@@ -36,30 +36,35 @@ class ExportData extends Page implements HasForms
     use InteractsWithForms;
 
     protected static ?string $navigationIcon =
-        'heroicon-o-arrow-down-tray';
+    'heroicon-o-arrow-down-tray';
 
     protected static ?string $navigationGroup =
-        'Laporan';
+    'Laporan';
 
     protected static ?string $navigationLabel =
-        'Export Data';
+    'Export Data';
 
     protected static ?string $title =
-        'Pusat Export Data';
+    'Pusat Export Data';
 
     protected static ?int $navigationSort = 90;
 
     protected static string $view =
-        'filament.pages.export-data';
+    'filament.pages.export-data';
 
     public ?array $data = [];
 
-   
+
     public static function canAccess(): bool
     {
-        return auth()->user()?->can(
-            'page_ExportData'
-        ) ?? false;
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        return $user->hasRole('super_admin', 'admin','kepala_it')
+            || $user->can('page_ExportData');
     }
 
     public function mount(): void
@@ -98,13 +103,13 @@ class ExportData extends Page implements HasForms
                             ->label('Jenis Data')
                             ->options([
                                 'assets' =>
-                                    'Data Inventaris Aset',
+                                'Data Inventaris Aset',
 
                                 'daily_reports' =>
-                                    'Laporan Harian IT',
+                                'Laporan Harian IT',
 
                                 'monthly_reports' =>
-                                    'Laporan Bulanan IT',
+                                'Laporan Bulanan IT',
                             ])
                             ->required()
                             ->live()
@@ -116,10 +121,10 @@ class ExportData extends Page implements HasForms
                             ->label('Format File')
                             ->options([
                                 'xlsx' =>
-                                    'Excel (.xlsx)',
+                                'Excel (.xlsx)',
 
                                 'pdf' =>
-                                    'PDF (.pdf)',
+                                'PDF (.pdf)',
                             ])
                             ->required()
                             ->native(false),
@@ -142,8 +147,8 @@ class ExportData extends Page implements HasForms
                         'heroicon-o-computer-desktop'
                     )
                     ->visible(
-                        fn (Get $get): bool =>
-                            $get('report_type') ===
+                        fn(Get $get): bool =>
+                        $get('report_type') ===
                             'assets'
                     )
                     ->schema([
@@ -152,14 +157,14 @@ class ExportData extends Page implements HasForms
                         )
                             ->label('Kategori Aset')
                             ->options(
-                                fn (): array =>
-                                    Assetcategory::query()
-                                        ->orderBy('name')
-                                        ->pluck(
-                                            'name',
-                                            'id'
-                                        )
-                                        ->all()
+                                fn(): array =>
+                                Assetcategory::query()
+                                    ->orderBy('name')
+                                    ->pluck(
+                                        'name',
+                                        'id'
+                                    )
+                                    ->all()
                             )
                             ->searchable()
                             ->preload()
@@ -173,14 +178,14 @@ class ExportData extends Page implements HasForms
                         )
                             ->label('Lokasi Aset')
                             ->options(
-                                fn (): array =>
-                                    Locations::query()
-                                        ->orderBy('name')
-                                        ->pluck(
-                                            'name',
-                                            'id'
-                                        )
-                                        ->all()
+                                fn(): array =>
+                                Locations::query()
+                                    ->orderBy('name')
+                                    ->pluck(
+                                        'name',
+                                        'id'
+                                    )
+                                    ->all()
                             )
                             ->searchable()
                             ->preload()
@@ -198,10 +203,10 @@ class ExportData extends Page implements HasForms
                                 'rusak' => 'Rusak',
 
                                 'maintenance' =>
-                                    'Maintenance',
+                                'Maintenance',
 
                                 'nonaktif' =>
-                                    'Nonaktif',
+                                'Nonaktif',
 
                                 'hilang' => 'Hilang',
                             ])
@@ -228,8 +233,8 @@ class ExportData extends Page implements HasForms
                         'heroicon-o-clipboard-document-list'
                     )
                     ->visible(
-                        fn (Get $get): bool =>
-                            $get('report_type') ===
+                        fn(Get $get): bool =>
+                        $get('report_type') ===
                             'daily_reports'
                     )
                     ->schema([
@@ -240,10 +245,10 @@ class ExportData extends Page implements HasForms
                             ->native(false)
                             ->displayFormat('d/m/Y')
                             ->required(
-                                fn (Get $get): bool =>
-                                    $get(
-                                        'report_type'
-                                    ) ===
+                                fn(Get $get): bool =>
+                                $get(
+                                    'report_type'
+                                ) ===
                                     'daily_reports'
                             ),
 
@@ -257,10 +262,10 @@ class ExportData extends Page implements HasForms
                                 'start_date'
                             )
                             ->required(
-                                fn (Get $get): bool =>
-                                    $get(
-                                        'report_type'
-                                    ) ===
+                                fn(Get $get): bool =>
+                                $get(
+                                    'report_type'
+                                ) ===
                                     'daily_reports'
                             ),
 
@@ -269,14 +274,14 @@ class ExportData extends Page implements HasForms
                         )
                             ->label('Staff IT')
                             ->options(
-                                fn (): array =>
-                                    User::query()
-                                        ->orderBy('name')
-                                        ->pluck(
-                                            'name',
-                                            'id'
-                                        )
-                                        ->all()
+                                fn(): array =>
+                                User::query()
+                                    ->orderBy('name')
+                                    ->pluck(
+                                        'name',
+                                        'id'
+                                    )
+                                    ->all()
                             )
                             ->searchable()
                             ->preload()
@@ -292,14 +297,14 @@ class ExportData extends Page implements HasForms
                                 'Kategori Pekerjaan'
                             )
                             ->options(
-                                fn (): array =>
-                                    Workcategory::query()
-                                        ->orderBy('name')
-                                        ->pluck(
-                                            'name',
-                                            'id'
-                                        )
-                                        ->all()
+                                fn(): array =>
+                                Workcategory::query()
+                                    ->orderBy('name')
+                                    ->pluck(
+                                        'name',
+                                        'id'
+                                    )
+                                    ->all()
                             )
                             ->searchable()
                             ->preload()
@@ -316,13 +321,13 @@ class ExportData extends Page implements HasForms
                             )
                             ->options([
                                 'selesai' =>
-                                    'Selesai',
+                                'Selesai',
 
                                 'proses' =>
-                                    'Proses',
+                                'Proses',
 
                                 'tertunda' =>
-                                    'Tertunda',
+                                'Tertunda',
                             ])
                             ->native(false)
                             ->placeholder(
@@ -337,10 +342,10 @@ class ExportData extends Page implements HasForms
                                 'draft' => 'Draft',
 
                                 'dikirim' =>
-                                    'Dikirim',
+                                'Dikirim',
 
                                 'direview' =>
-                                    'Direview',
+                                'Direview',
                             ])
                             ->native(false)
                             ->placeholder(
@@ -353,16 +358,16 @@ class ExportData extends Page implements HasForms
                             ->label('Prioritas')
                             ->options([
                                 'rendah' =>
-                                    'Rendah',
+                                'Rendah',
 
                                 'normal' =>
-                                    'Normal',
+                                'Normal',
 
                                 'tinggi' =>
-                                    'Tinggi',
+                                'Tinggi',
 
                                 'urgent' =>
-                                    'Urgent',
+                                'Urgent',
                             ])
                             ->native(false)
                             ->placeholder(
@@ -376,25 +381,25 @@ class ExportData extends Page implements HasForms
                                 'Lokasi Pekerjaan'
                             )
                             ->options(
-                                fn (): array =>
-                                    Dailyreport::query()
-                                        ->whereNotNull(
-                                            'location'
-                                        )
-                                        ->where(
-                                            'location',
-                                            '!=',
-                                            ''
-                                        )
-                                        ->distinct()
-                                        ->orderBy(
-                                            'location'
-                                        )
-                                        ->pluck(
-                                            'location',
-                                            'location'
-                                        )
-                                        ->all()
+                                fn(): array =>
+                                Dailyreport::query()
+                                    ->whereNotNull(
+                                        'location'
+                                    )
+                                    ->where(
+                                        'location',
+                                        '!=',
+                                        ''
+                                    )
+                                    ->distinct()
+                                    ->orderBy(
+                                        'location'
+                                    )
+                                    ->pluck(
+                                        'location',
+                                        'location'
+                                    )
+                                    ->all()
                             )
                             ->searchable()
                             ->native(false)
@@ -427,28 +432,28 @@ class ExportData extends Page implements HasForms
                         )
                             ->label('Aset Terkait')
                             ->options(
-                                fn (): array =>
-                                    Itassests::query()
-                                        ->orderBy('code')
-                                        ->get()
-                                        ->mapWithKeys(
-                                            function (
-                                                Itassests $asset
-                                            ): array {
-                                                return [
-                                                    $asset->id =>
-                                                        collect([
-                                                            $asset->code,
-                                                            $asset->name,
-                                                        ])
-                                                            ->filter()
-                                                            ->implode(
-                                                                ' — '
-                                                            ),
-                                                ];
-                                            }
-                                        )
-                                        ->all()
+                                fn(): array =>
+                                Itassests::query()
+                                    ->orderBy('code')
+                                    ->get()
+                                    ->mapWithKeys(
+                                        function (
+                                            Itassests $asset
+                                        ): array {
+                                            return [
+                                                $asset->id =>
+                                                collect([
+                                                    $asset->code,
+                                                    $asset->name,
+                                                ])
+                                                    ->filter()
+                                                    ->implode(
+                                                        ' — '
+                                                    ),
+                                            ];
+                                        }
+                                    )
+                                    ->all()
                             )
                             ->searchable()
                             ->preload()
@@ -479,8 +484,8 @@ class ExportData extends Page implements HasForms
                         'heroicon-o-calendar-days'
                     )
                     ->visible(
-                        fn (Get $get): bool =>
-                            $get('report_type') ===
+                        fn(Get $get): bool =>
+                        $get('report_type') ===
                             'monthly_reports'
                     )
                     ->schema([
@@ -540,20 +545,20 @@ class ExportData extends Page implements HasForms
 
         return match ($reportType) {
             'assets' =>
-                $this->exportAssets($state),
+            $this->exportAssets($state),
 
             'daily_reports' =>
-                $this->exportDailyReports(
-                    $state
-                ),
+            $this->exportDailyReports(
+                $state
+            ),
 
             'monthly_reports' =>
-                $this->exportMonthlyReport(
-                    $state
-                ),
+            $this->exportMonthlyReport(
+                $state
+            ),
 
             default =>
-                $this->invalidReportType(),
+            $this->invalidReportType(),
         };
     }
 
@@ -595,8 +600,7 @@ class ExportData extends Page implements HasForms
 
         if (! $assetService
             ->query($filters)
-            ->exists()
-        ) {
+            ->exists()) {
             Notification::make()
                 ->title('Data tidak ditemukan')
                 ->body(
@@ -639,21 +643,17 @@ class ExportData extends Page implements HasForms
                     new AssetsExport(
                         filters: $filters,
 
-                        generatedBy:
-                            $generatedBy,
+                        generatedBy: $generatedBy,
 
-                        generatedAt:
-                            $generatedAt->format(
-                                'd/m/Y H:i'
-                            ),
+                        generatedAt: $generatedAt->format(
+                            'd/m/Y H:i'
+                        ),
 
-                        documentNumber:
-                            $history
-                                ->document_number,
+                        documentNumber: $history
+                            ->document_number,
 
-                        documentStatus:
-                            $history
-                                ->document_status,
+                        documentStatus: $history
+                            ->document_status,
                     ),
                     ExcelWriter::XLSX
                 );
@@ -668,35 +668,35 @@ class ExportData extends Page implements HasForms
                         'assets' => $assets,
 
                         'filters' =>
-                            $assetService
-                                ->filterSummary(
-                                    $filters
-                                ),
+                        $assetService
+                            ->filterSummary(
+                                $filters
+                            ),
 
                         'generatedAt' =>
-                            $generatedAt,
+                        $generatedAt,
 
                         'generatedBy' =>
-                            $generatedBy,
+                        $generatedBy,
 
                         'company' =>
-                            config('company'),
+                        config('company'),
 
                         'logoBase64' =>
-                            $this
-                                ->companyLogoBase64(),
+                        $this
+                            ->companyLogoBase64(),
 
                         'documentNumber' =>
-                            $history
-                                ->document_number,
+                        $history
+                            ->document_number,
 
                         'documentStatus' =>
-                            $history
-                                ->document_status,
+                        $history
+                            ->document_status,
 
                         'signatories' =>
-                            $history
-                                ->signatories,
+                        $history
+                            ->signatories,
                     ]
                 )->setPaper(
                     'a4',
@@ -718,7 +718,7 @@ class ExportData extends Page implements HasForms
                 )
                 ->body(
                     'Nomor dokumen: ' .
-                    $history->document_number
+                        $history->document_number
                 )
                 ->success()
                 ->send();
@@ -859,8 +859,7 @@ class ExportData extends Page implements HasForms
 
         if (! $dailyReportService
             ->query($filters)
-            ->exists()
-        ) {
+            ->exists()) {
             Notification::make()
                 ->title('Data tidak ditemukan')
                 ->body(
@@ -903,21 +902,17 @@ class ExportData extends Page implements HasForms
                     new DailyReportsExport(
                         filters: $filters,
 
-                        generatedBy:
-                            $generatedBy,
+                        generatedBy: $generatedBy,
 
-                        generatedAt:
-                            $generatedAt->format(
-                                'd/m/Y H:i'
-                            ),
+                        generatedAt: $generatedAt->format(
+                            'd/m/Y H:i'
+                        ),
 
-                        documentNumber:
-                            $history
-                                ->document_number,
+                        documentNumber: $history
+                            ->document_number,
 
-                        documentStatus:
-                            $history
-                                ->document_status,
+                        documentStatus: $history
+                            ->document_status,
                     ),
                     ExcelWriter::XLSX
                 );
@@ -933,41 +928,41 @@ class ExportData extends Page implements HasForms
                         'reports' => $reports,
 
                         'filters' =>
-                            $dailyReportService
-                                ->filterSummary(
-                                    $filters
-                                ),
+                        $dailyReportService
+                            ->filterSummary(
+                                $filters
+                            ),
 
                         'statistics' =>
-                            $dailyReportService
-                                ->statistics(
-                                    $reports
-                                ),
+                        $dailyReportService
+                            ->statistics(
+                                $reports
+                            ),
 
                         'generatedAt' =>
-                            $generatedAt,
+                        $generatedAt,
 
                         'generatedBy' =>
-                            $generatedBy,
+                        $generatedBy,
 
                         'company' =>
-                            config('company'),
+                        config('company'),
 
                         'logoBase64' =>
-                            $this
-                                ->companyLogoBase64(),
+                        $this
+                            ->companyLogoBase64(),
 
                         'documentNumber' =>
-                            $history
-                                ->document_number,
+                        $history
+                            ->document_number,
 
                         'documentStatus' =>
-                            $history
-                                ->document_status,
+                        $history
+                            ->document_status,
 
                         'signatories' =>
-                            $history
-                                ->signatories,
+                        $history
+                            ->signatories,
                     ]
                 )->setPaper(
                     'a4',
@@ -989,7 +984,7 @@ class ExportData extends Page implements HasForms
                 )
                 ->body(
                     'Nomor dokumen: ' .
-                    $history->document_number
+                        $history->document_number
                 )
                 ->success()
                 ->send();
@@ -1143,21 +1138,17 @@ class ExportData extends Page implements HasForms
                     new MonthlyItReportExport(
                         report: $report,
 
-                        generatedBy:
-                            $generatedBy,
+                        generatedBy: $generatedBy,
 
-                        generatedAt:
-                            $generatedAt->format(
-                                'd/m/Y H:i'
-                            ),
+                        generatedAt: $generatedAt->format(
+                            'd/m/Y H:i'
+                        ),
 
-                        documentNumber:
-                            $history
-                                ->document_number,
+                        documentNumber: $history
+                            ->document_number,
 
-                        documentStatus:
-                            $history
-                                ->document_status,
+                        documentStatus: $history
+                            ->document_status,
                     ),
                     ExcelWriter::XLSX
                 );
@@ -1172,29 +1163,29 @@ class ExportData extends Page implements HasForms
                         'data' => $data,
 
                         'generatedAt' =>
-                            $generatedAt,
+                        $generatedAt,
 
                         'generatedBy' =>
-                            $generatedBy,
+                        $generatedBy,
 
                         'company' =>
-                            config('company'),
+                        config('company'),
 
                         'logoBase64' =>
-                            $this
-                                ->companyLogoBase64(),
+                        $this
+                            ->companyLogoBase64(),
 
                         'documentNumber' =>
-                            $history
-                                ->document_number,
+                        $history
+                            ->document_number,
 
                         'documentStatus' =>
-                            $history
-                                ->document_status,
+                        $history
+                            ->document_status,
 
                         'signatories' =>
-                            $history
-                                ->signatories,
+                        $history
+                            ->signatories,
                     ]
                 )->setPaper(
                     'a4',
@@ -1216,7 +1207,7 @@ class ExportData extends Page implements HasForms
                 )
                 ->body(
                     'Nomor dokumen: ' .
-                    $history->document_number
+                        $history->document_number
                 )
                 ->success()
                 ->send();
@@ -1257,17 +1248,15 @@ class ExportData extends Page implements HasForms
     private function authorizeReportExport(
         string $reportType
     ): void {
-        $permission = match (
-            $reportType
-        ) {
+        $permission = match ($reportType) {
             'assets' =>
-                'export_assets',
+            'export_assets',
 
             'daily_reports' =>
-                'export_daily_reports',
+            'export_daily_reports',
 
             'monthly_reports' =>
-                'export_monthly_reports',
+            'export_monthly_reports',
 
             default => null,
         };
@@ -1323,7 +1312,7 @@ class ExportData extends Page implements HasForms
             $filename,
             [
                 'Content-Type' =>
-                    $contentType,
+                $contentType,
             ]
         );
     }
@@ -1334,8 +1323,7 @@ class ExportData extends Page implements HasForms
     |--------------------------------------------------------------------------
     */
 
-    private function companyLogoBase64():
-        ?string
+    private function companyLogoBase64(): ?string
     {
         $relativePath = config(
             'company.logo'
