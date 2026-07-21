@@ -5,7 +5,7 @@ namespace App\Filament\Pages;
 use App\Exports\AssetsExport;
 use App\Exports\DailyReportsExport;
 use App\Exports\MonthlyItReportExport;
-use App\Models\AssetCategory;
+use App\Models\Assetcategory;
 use App\Models\Dailyreport;
 use App\Models\Itassests;
 
