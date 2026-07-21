@@ -2,7 +2,7 @@
 
 namespace App\Services\Exports;
 
-use App\Models\MonthlyItReport;
+use App\Models\Monthlyitreport;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
