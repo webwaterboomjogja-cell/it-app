@@ -13,7 +13,7 @@ class ProblematicAssets extends BaseWidget
 
     protected static ?string $heading = 'Aset Bermasalah';
 
-    protected int|string|array $columnSpan = 1;
+    protected int|string|array $columnSpan = 'full';
 
     public static function canView(): bool
     {
