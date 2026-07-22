@@ -14,6 +14,9 @@ Route::middleware(['auth'])->group(function () {
         ->name('it-schedules.calendar.download');
 });
 
+Route::get('/asset-it/labels/print-all', [AssetQrController::class, 'printAll'])
+    ->middleware(['auth'])
+    ->name('asset-it.labels.print-all');
 
 Route::get('/asset-it/scan/{token}', [AssetQrController::class, 'show'])
     ->name('asset-it.scan');

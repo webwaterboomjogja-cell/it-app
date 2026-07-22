@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Label QR Aset {{ $asset->code }}</title>
+    <title>Print Semua QR Code Aset IT</title>
 
     <style>
         * {
@@ -19,6 +19,7 @@
             --slate-200: #e2e8f0;
             --slate-300: #cbd5e1;
             --slate-500: #64748b;
+            --slate-600: #475569;
             --slate-700: #334155;
             --slate-800: #1e293b;
             --slate-900: #0f172a;
@@ -43,22 +44,20 @@
         }
 
         .page-shell {
-            min-height: calc(100vh - 56px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 22px;
+            max-width: 1180px;
+            margin: 0 auto;
         }
 
         .toolbar {
-            width: 100%;
-            max-width: 520px;
+            position: sticky;
+            top: 16px;
+            z-index: 20;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 14px;
-            padding: 16px 18px;
+            gap: 18px;
+            margin-bottom: 24px;
+            padding: 18px 20px;
             background: rgba(255, 255, 255, .92);
             border: 1px solid rgba(226, 232, 240, .9);
             border-radius: 22px;
@@ -66,16 +65,58 @@
             backdrop-filter: blur(14px);
         }
 
-        .toolbar-title {
-            font-size: 16px;
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .toolbar-icon {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #ffffff;
+            font-size: 22px;
             font-weight: 900;
+            box-shadow: 0 10px 22px rgba(37, 99, 235, .28);
+        }
+
+        .toolbar-title {
+            margin: 0;
+            font-size: 19px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
             color: var(--slate-900);
         }
 
         .toolbar-subtitle {
             margin-top: 4px;
-            font-size: 12px;
+            font-size: 13px;
             color: var(--slate-500);
+        }
+
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .summary-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 13px;
+            border-radius: 999px;
+            background: var(--slate-100);
+            border: 1px solid var(--slate-200);
+            color: var(--slate-700);
+            font-size: 12px;
+            font-weight: 800;
         }
 
         .btn {
@@ -90,13 +131,22 @@
             font-weight: 800;
             cursor: pointer;
             box-shadow: 0 12px 24px rgba(37, 99, 235, .28);
-            white-space: nowrap;
+        }
+
+        .btn:hover {
+            filter: brightness(.98);
+            transform: translateY(-1px);
+        }
+
+        .labels-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
         }
 
         .label-card {
             position: relative;
             overflow: hidden;
-            width: 320px;
             min-height: 300px;
             padding: 14px;
             background: #ffffff;
@@ -163,7 +213,8 @@
             align-items: center;
             padding: 11px;
             border-radius: 16px;
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            background:
+                linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
             border: 1px solid var(--slate-200);
         }
 
@@ -294,6 +345,23 @@
             color: var(--slate-700);
         }
 
+        .empty {
+            padding: 48px 28px;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 22px;
+            text-align: center;
+            color: var(--slate-500);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, .08);
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--slate-900);
+            margin-bottom: 6px;
+        }
+
         @page {
             size: A4;
             margin: 10mm;
@@ -309,18 +377,21 @@
             }
 
             .page-shell {
-                min-height: auto;
-                display: block;
+                max-width: none;
+                margin: 0;
             }
 
             .toolbar {
                 display: none;
             }
 
+            .labels-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 7mm;
+            }
+
             .label-card {
-                width: 58.6mm;
                 min-height: 74mm;
-                margin: 0;
                 padding: 4mm;
                 border: 1.4px solid #111827;
                 border-radius: 4mm;
@@ -368,24 +439,35 @@
             }
         }
 
-        @media screen and (max-width: 560px) {
+        @media screen and (max-width: 960px) {
+            .labels-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media screen and (max-width: 640px) {
             body {
                 padding: 16px;
             }
 
             .toolbar {
+                position: static;
                 flex-direction: column;
                 align-items: stretch;
             }
 
+            .toolbar-actions {
+                justify-content: stretch;
+            }
+
+            .summary-pill,
             .btn {
                 justify-content: center;
                 width: 100%;
             }
 
-            .label-card {
-                width: 100%;
-                max-width: 340px;
+            .labels-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -437,88 +519,115 @@
 
     <div class="page-shell">
         <div class="toolbar">
-            <div>
-                <div class="toolbar-title">
-                    Cetak Label QR Aset
+            <div class="toolbar-left">
+                <div class="toolbar-icon">
+                    QR
                 </div>
-                <div class="toolbar-subtitle">
-                    {{ $asset->code }} - {{ $asset->name }}
+
+                <div>
+                    <h1 class="toolbar-title">
+                        Print Semua QR Code Aset IT
+                    </h1>
+                    <div class="toolbar-subtitle">
+                        Label inventaris siap cetak untuk ditempel pada perangkat IT.
+                    </div>
                 </div>
             </div>
 
-            <button class="btn" onclick="window.print()">
-                🖨 Cetak Label
-            </button>
+            <div class="toolbar-actions">
+                <div class="summary-pill">
+                    Total: {{ $assets->count() }} aset
+                </div>
+
+                <button class="btn" onclick="window.print()">
+                    🖨 Print Semua QR
+                </button>
+            </div>
         </div>
 
-        <div class="label-card">
-            <div class="label-top">
-                <div class="label-brand">
-                    <div class="label-kicker">
-                        Inventaris IT
-                    </div>
-                    <div class="label-title">
-                        PT Taman Wisata Jogja
-                    </div>
-                </div>
-
-                <div class="label-type">
-                    Asset Tag
-                </div>
-            </div>
-
-            <div class="qr-panel">
-                <div class="qr">
-                    {!! QrCode::size(115)->margin(1)->generate(route('asset-it.scan', $asset->qr_token)) !!}
-                </div>
-
-                <div class="asset-main">
-                    <div class="code">
-                        {{ $asset->code }}
-                    </div>
-
-                    <div class="name">
-                        {{ $asset->name }}
-                    </div>
-
-                    <div class="status-row">
-                        <span class="badge {{ $statusClass($asset->status) }}">
-                            {{ $statusLabel($asset->status) }}
-                        </span>
-
-                        <span class="badge {{ $conditionClass($asset->condition) }}">
-                            {{ $conditionLabel($asset->condition) }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="details">
-                <div class="detail-row">
-                    <div class="detail-label">Kategori</div>
-                    <div class="detail-value">{{ $asset->category?->name ?? '-' }}</div>
-                </div>
-
-                <div class="detail-row">
-                    <div class="detail-label">Lokasi</div>
-                    <div class="detail-value">{{ $asset->location?->name ?? '-' }}</div>
-                </div>
-
-                <div class="detail-row">
-                    <div class="detail-label">PIC</div>
-                    <div class="detail-value">{{ $asset->responsibleUser?->name ?? '-' }}</div>
-                </div>
-            </div>
-
-            <div class="label-footer">
-                <div class="scan-text">
-                    Scan untuk detail aset
+        @if ($assets->isEmpty())
+            <div class="empty">
+                <div class="empty-title">
+                    Belum ada QR Code aset
                 </div>
                 <div>
-                    {{ now()->format('d/m/Y') }}
+                    Belum ada aset yang memiliki QR Token.
                 </div>
             </div>
-        </div>
+        @else
+            <div class="labels-grid">
+                @foreach ($assets as $asset)
+                    <div class="label-card">
+                        <div class="label-top">
+                            <div class="label-brand">
+                                <div class="label-kicker">
+                                    Inventaris IT
+                                </div>
+                                <div class="label-title">
+                                    PT Taman Wisata Jogja
+                                </div>
+                            </div>
+
+                            <div class="label-type">
+                                Asset Tag
+                            </div>
+                        </div>
+
+                        <div class="qr-panel">
+                            <div class="qr">
+                                {!! QrCode::size(115)->margin(1)->generate(route('asset-it.scan', $asset->qr_token)) !!}
+                            </div>
+
+                            <div class="asset-main">
+                                <div class="code">
+                                    {{ $asset->code }}
+                                </div>
+
+                                <div class="name">
+                                    {{ $asset->name }}
+                                </div>
+
+                                <div class="status-row">
+                                    <span class="badge {{ $statusClass($asset->status) }}">
+                                        {{ $statusLabel($asset->status) }}
+                                    </span>
+
+                                    <span class="badge {{ $conditionClass($asset->condition) }}">
+                                        {{ $conditionLabel($asset->condition) }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="details">
+                            <div class="detail-row">
+                                <div class="detail-label">Kategori</div>
+                                <div class="detail-value">{{ $asset->category?->name ?? '-' }}</div>
+                            </div>
+
+                            <div class="detail-row">
+                                <div class="detail-label">Lokasi</div>
+                                <div class="detail-value">{{ $asset->location?->name ?? '-' }}</div>
+                            </div>
+
+                            <div class="detail-row">
+                                <div class="detail-label">PIC</div>
+                                <div class="detail-value">{{ $asset->responsibleUser?->name ?? '-' }}</div>
+                            </div>
+                        </div>
+
+                        <div class="label-footer">
+                            <div class="scan-text">
+                                Scan untuk detail aset
+                            </div>
+                            <div>
+                                {{ now()->format('d/m/Y') }}
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 </body>
 </html>

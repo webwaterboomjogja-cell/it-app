@@ -193,6 +193,13 @@ class ItassetsResource extends Resource
             ->heading('Daftar Inventaris Aset IT')
             ->description('Monitoring aset IT kantor berdasarkan kategori, lokasi, penanggung jawab, status, dan kondisi.')
             ->headerActions([
+                Action::make('print_all_qr')
+                    ->label('Print Semua QR')
+                    ->icon('heroicon-m-printer')
+                    ->color('warning')
+                    ->url(route('asset-it.labels.print-all'))
+                    ->openUrlInNewTab(),
+
                 Action::make('export_all')
                     ->label('Export Semua')
                     ->icon('heroicon-m-arrow-down-tray')

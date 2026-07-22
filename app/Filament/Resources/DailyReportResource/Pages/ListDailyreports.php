@@ -133,9 +133,33 @@ class ListDailyreports extends ListRecords
                         ->columns(2),
                 ])
                 ->action(function (array $data) {
-                    $fileName = 'laporan-harian-it-' . now()->format('Y-m-d-His') . '.xlsx';
+                    $generatedAt = now();
 
-                    return Excel::download(new DailyReportsExport($data), $fileName);
+                    $generatedBy = auth()->user()?->name
+                        ?? 'Sistem';
+
+                    $documentNumber = sprintf(
+                        'LHI/%s/%s',
+                        $generatedAt->format('Ym'),
+                        $generatedAt->format('His')
+                    );
+
+                    $fileName = 'laporan-harian-it-'
+                        . $generatedAt->format('Y-m-d-His')
+                        . '.xlsx';
+
+                    return Excel::download(
+                        new DailyReportsExport(
+                            filters: $data,
+                            generatedBy: $generatedBy,
+                            generatedAt: $generatedAt->format(
+                                'd/m/Y H:i'
+                            ),
+                            documentNumber: $documentNumber,
+                            documentStatus: 'draft',
+                        ),
+                        $fileName
+                    );
                 }),
         ];
     }
