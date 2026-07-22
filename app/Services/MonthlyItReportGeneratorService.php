@@ -137,7 +137,7 @@ class MonthlyItReportGeneratorService
                 'total_completed' => $dailyReports
                     ->filter(
                         fn($report): bool => $this->isCompleted(
-                            $report->status
+                            $report->work_status
                         )
                     )
                     ->count(),
@@ -145,7 +145,7 @@ class MonthlyItReportGeneratorService
                 'total_pending' => $dailyReports
                     ->filter(
                         fn($report): bool => $this->isPending(
-                            $report->status
+                            $report->work_status
                         )
                     )
                     ->count(),
@@ -320,7 +320,7 @@ class MonthlyItReportGeneratorService
                     'completed' => $items
                         ->filter(
                             fn($report): bool => $this->isCompleted(
-                                $report->status
+                                $report->work_status
                             )
                         )
                         ->count(),
@@ -328,7 +328,7 @@ class MonthlyItReportGeneratorService
                     'pending' => $items
                         ->filter(
                             fn($report): bool => $this->isPending(
-                                $report->status
+                                $report->work_status
                             )
                         )
                         ->count(),
@@ -414,7 +414,7 @@ class MonthlyItReportGeneratorService
                     'completed' => $items
                         ->filter(
                             fn($report): bool => $this->isCompleted(
-                                $report->status
+                                $report->work_status
                             )
                         )
                         ->count(),
@@ -422,7 +422,7 @@ class MonthlyItReportGeneratorService
                     'in_progress' => $items
                         ->filter(
                             fn($report): bool => $this->isInProgress(
-                                $report->status
+                                $report->work_status
                             )
                         )
                         ->count(),
@@ -430,7 +430,7 @@ class MonthlyItReportGeneratorService
                     'pending' => $items
                         ->filter(
                             fn($report): bool => $this->isPending(
-                                $report->status
+                                $report->work_status
                             )
                         )
                         ->count(),
@@ -455,7 +455,7 @@ class MonthlyItReportGeneratorService
                             $items
                                 ->filter(
                                     fn($report): bool => $this->isCompleted(
-                                        $report->status
+                                        $report->work_status
                                     )
                                 )
                                 ->count() / $items->count() * 100,
@@ -495,7 +495,7 @@ class MonthlyItReportGeneratorService
                     'completed' => $items
                         ->filter(
                             fn($report): bool => $this->isCompleted(
-                                $report->status
+                                $report->work_status
                             )
                         )
                         ->count(),
@@ -503,7 +503,7 @@ class MonthlyItReportGeneratorService
                     'pending' => $items
                         ->filter(
                             fn($report): bool => $this->isPending(
-                                $report->status
+                                $report->work_status
                             )
                         )
                         ->count(),
@@ -536,7 +536,7 @@ class MonthlyItReportGeneratorService
         return $reports
             ->groupBy(
                 fn($report): string => $this->normalizeValue(
-                    $report->status
+                    $report->work_status
                 )
             )
             ->map(function (

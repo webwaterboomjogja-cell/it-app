@@ -30,6 +30,8 @@ class Dailyreport extends Model
         'review_note',
     ];
 
+    protected $table = 'dailyreports';
+
     protected function casts(): array
     {
         return [
