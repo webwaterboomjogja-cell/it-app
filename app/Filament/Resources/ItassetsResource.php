@@ -15,6 +15,12 @@ use Filament\Tables\Actions\Action;
 
 use App\Models\ItassetMovement;
 
+use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\WebpEncoder;
+
 
 class ItassetsResource extends Resource
 {
@@ -164,15 +170,48 @@ class ItassetsResource extends Resource
                         Forms\Components\FileUpload::make('photo')
                             ->label('Foto Aset')
                             ->image()
+                            ->acceptedFileTypes([
+                                'image/jpeg',
+                                'image/png',
+                                'image/webp',
+                            ])
+                            ->maxSize(10240) 
                             ->imageEditor()
                             ->columnSpanFull()
-                            ->directory('it-assets')
                             ->disk('public')
+                            ->directory('it-assets')
                             ->imagePreviewHeight('220')
                             ->loadingIndicatorPosition('left')
                             ->panelLayout('integrated')
                             ->downloadable()
-                            ->openable(),
+                            ->openable()
+                            ->saveUploadedFileUsing(function (TemporaryUploadedFile $file): string {
+                                $manager = ImageManager::usingDriver(Driver::class);
+
+                                $image = $manager->decode($file->getRealPath());
+
+                                $isMoreThan2Mb = $file->getSize() > (2 * 1024 * 1024);
+
+                                if ($isMoreThan2Mb) {
+                                    $image->scaleDown(width: 1600);
+                                    $quality = 72;
+                                } else {
+                                    $quality = 85;
+                                }
+
+                                $fileName = 'it-assets/' . Str::uuid() . '.webp';
+
+                                $encodedImage = $image->encode(new WebpEncoder(
+                                    quality: $quality
+                                ));
+
+                                Storage::disk('public')->put(
+                                    $fileName,
+                                    (string) $encodedImage
+                                );
+
+                                return $fileName;
+                            }),
 
                         Forms\Components\Textarea::make('notes')
                             ->label('Catatan')
