@@ -116,10 +116,10 @@ class ItscheduleResource extends Resource
                                 Itschedule::TYPE_PERMISSION,
                             ])),
 
-                        Forms\Components\TimePicker::make('start_time')
-                            ->label('Jam Mulai')
-                            ->seconds(false)
-                            ->required(fn(Forms\Get $get): bool => Itschedule::requiresTimeAndLocation($get('type'))),
+                        // Forms\Components\TimePicker::make('start_time')
+                        //     ->label('Jam Mulai')
+                        //     ->seconds(false)
+                        //     ->required(fn(Forms\Get $get): bool => Itschedule::requiresTimeAndLocation($get('type'))),
 
 
                         Forms\Components\TimePicker::make('end_time')
@@ -131,11 +131,11 @@ class ItscheduleResource extends Resource
                                 Itschedule::TYPE_PERMISSION,
                             ])),
 
-                        Forms\Components\TimePicker::make('end_time')
-                            ->label('Jam Selesai')
-                            ->seconds(false)
-                            ->rule('after:start_time')
-                            ->required(fn(Forms\Get $get): bool => Itschedule::requiresTimeAndLocation($get('type'))),
+                        // Forms\Components\TimePicker::make('end_time')
+                        //     ->label('Jam Selesai')
+                        //     ->seconds(false)
+                        //     ->rule('after:start_time')
+                        //     ->required(fn(Forms\Get $get): bool => Itschedule::requiresTimeAndLocation($get('type'))),
 
                         Forms\Components\TextInput::make('location')
                             ->label('Lokasi Tugas')
@@ -145,10 +145,10 @@ class ItscheduleResource extends Resource
                                 Itschedule::TYPE_PERMISSION,
                             ])),
 
-                        Forms\Components\TextInput::make('location')
-                            ->label('Lokasi Tugas')
-                            ->maxLength(255)
-                            ->required(fn(Forms\Get $get): bool => Itschedule::requiresTimeAndLocation($get('type'))),
+                        // Forms\Components\TextInput::make('location')
+                        //     ->label('Lokasi Tugas')
+                        //     ->maxLength(255)
+                        //     ->required(fn(Forms\Get $get): bool => Itschedule::requiresTimeAndLocation($get('type'))),
 
                         Forms\Components\Textarea::make('notes')
                             ->label('Catatan')
